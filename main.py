@@ -23,6 +23,7 @@ TEXTS = {
     "ru": {
         "choose_lang": "Привет! 👋\n\nВыбери язык:",
         "rules": (
+            "เปลี่ยนภาษาได้ด้วยคำสั่ง /language\n\n"
             "🎄 Конкурс «Bear of The Year»\n\n"
             "Добро пожаловать на конкурс «Медведь года».\n"
             "Вам достался уникальный медведь — теперь его судьба полностью в ваших руках.\n\n"
@@ -58,6 +59,7 @@ TEXTS = {
     "th": {
         "choose_lang": "สวัสดี 👋\n\nกรุณาเลือกภาษา:",
         "rules": (
+            "Язык можно сменить командой /language\n\n"
             "🎄 การประกวด «Bear of The Year»\n\n"
             "ยินดีต้อนรับสู่การแข่งขัน “หมีแห่งปี”\n"
             "คุณได้รับหมีที่ไม่เหมือนใคร และตอนนี้ชะตากรรมของมันอยู่ในมือคุณแล้ว\n\n"
@@ -108,6 +110,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
 async def change_language(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    context.user_data.pop("lang", None)
     await update.message.reply_text(
         "Choose language / เลือกภาษา",
         reply_markup=language_keyboard()
@@ -123,9 +126,11 @@ async def set_language(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await query.message.reply_text(TEXTS[lang]["rules"])
 
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if "lang" not in context.user_data:
+    lang = context.user_data.get("lang")
+
+    if not lang:
         await update.message.reply_text(
-            TEXTS["ru"]["need_lang"],
+            TEXTS["ru"]["choose_lang"],
             reply_markup=language_keyboard()
         )
         return
@@ -150,10 +155,11 @@ def main():
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("language", change_language))
     app.add_handler(CallbackQueryHandler(set_language, pattern="^lang_"))
-    app.add_handler(MessageHandler(filters.ALL, handle_message))
+    app.add_handler(MessageHandler(filters.TEXT | filters.PHOTO, handle_message))
 
     print("Bot started...")
     app.run_polling()
+
 
 if __name__ == "__main__":
     main()
