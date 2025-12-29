@@ -12,7 +12,7 @@ from telegram.ext import (
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 ADMIN_ID = int(os.getenv("ADMIN_ID"))
 
-DEADLINE = datetime(2025, 1, 8, 23, 59)
+DEADLINE = datetime(2026, 1, 8, 23, 59)
 
 RULES_TEXT = (
     "🎄 Конкурс «Новогодний медведь»\n\n"
